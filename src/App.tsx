@@ -37,8 +37,11 @@ import { MerchantStaffPage } from './pages/merchant/MerchantStaffPage'
 const merchantRoles = ['merchant_staff', 'merchant_admin'] as const
 
 export default function App() {
+  const base = import.meta.env.BASE_URL
+  const basename = base === '/' ? undefined : base.replace(/\/$/, '')
+
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
