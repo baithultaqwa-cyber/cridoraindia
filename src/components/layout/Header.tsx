@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthContext'
+import { CridoraLogoMark } from '../branding/CridoraLogoMark'
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
@@ -35,13 +36,10 @@ export function Header() {
       <div className="mx-auto flex min-h-[4.5rem] max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <NavLink
           to="/"
-          className="group flex items-center gap-2 text-lg font-semibold tracking-tight text-cridora-text"
+          className="group flex items-center gap-2.5 text-lg font-semibold tracking-tight text-cridora-text"
           onClick={() => setOpen(false)}
         >
-          <span
-            className="h-8 w-8 shrink-0 rounded-lg bg-cridora-gold shadow-[var(--shadow-gold)] transition-all duration-300 ease-out group-hover:scale-105 group-hover:shadow-[0_0_24px_-4px_rgba(200,162,77,0.55)]"
-            aria-hidden
-          />
+          <CridoraLogoMark size="sm" />
           <span className="transition-colors duration-300 group-hover:text-cridora-gold-light">Cridora</span>
         </NavLink>
         <nav className="hidden items-center gap-0.5 xl:flex" aria-label="Primary">

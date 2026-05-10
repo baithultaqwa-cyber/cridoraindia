@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
+import { CridoraLogoMark } from '../branding/CridoraLogoMark'
 
 export function Footer() {
   return (
@@ -6,7 +7,10 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <p className="font-display text-2xl font-semibold text-cridora-text">Cridora</p>
+            <div className="flex items-center gap-3">
+              <CridoraLogoMark size="md" />
+              <p className="font-display text-2xl font-semibold text-cridora-text">Cridora</p>
+            </div>
             <p className="mt-3 max-w-md text-sm leading-relaxed text-cridora-muted">
               A modern gold savings & redemption ecosystem — connecting users and trusted jewellers across
               India. Awareness and pilot access; not a deposit or guaranteed-return product.
