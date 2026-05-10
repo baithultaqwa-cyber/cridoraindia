@@ -1,6 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
-  <rect width="40" height="40" rx="8.8" fill="#000814" />
-  <circle cx="20" cy="20" r="18" stroke="url(#cridoraGold)" stroke-width="2.5" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+  <rect
+    width="40"
+    height="40"
+    rx="8.8"
+    ry="8.8"
+    fill="#000814"
+    stroke="rgba(165, 180, 252, 0.2)"
+    stroke-width="0.5"
+  />
+  <circle cx="20" cy="20" r="18" stroke="url(#cridoraGoldLine)" stroke-width="2.5" />
   <path
     d="M14 20C14 16.6863 16.6863 14 20 14"
     stroke="#e8c97a"
@@ -14,7 +22,7 @@
     stroke-linecap="round"
   />
   <defs>
-    <linearGradient id="cridoraGold" x1="2" y1="2" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+    <linearGradient id="cridoraGoldLine" x1="2" y1="2" x2="38" y2="38" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#e8c97a" />
       <stop offset="100%" stop-color="#8b5a1a" />
     </linearGradient>
