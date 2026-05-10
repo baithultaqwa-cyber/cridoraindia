@@ -1,0 +1,267 @@
+@import "tailwindcss";
+
+/* Core palette — marketplace + dashboard */
+@theme {
+  --color-navy-deep: #000814;
+  --color-navy-silk: #001529;
+  --color-navy-shine: #002b5c;
+  --color-silk: #a5b4fc;
+
+  /* Semantic aliases (use in components) */
+  --color-cridora-ink: #000814;
+  --color-cridora-bg: #000814;
+  --color-cridora-surface: #001529;
+  --color-cridora-surface-2: #002b5c;
+  --color-cridora-border: #143d66;
+  --color-cridora-text: #f0f4ff;
+  --color-cridora-muted: #a5b4fc;
+  --color-cridora-gold: #c8a24d;
+  --color-cridora-gold-light: #e8c97a;
+  --color-cridora-success: #1fa971;
+  --color-cridora-warning: #f0b429;
+  --color-cridora-error: #d9534f;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+
+  --shadow-card: 0 8px 32px rgba(0, 8, 20, 0.45), 0 0 0 1px rgba(165, 180, 252, 0.06);
+  --shadow-card-hover: 0 20px 50px -12px rgba(0, 43, 92, 0.65),
+    0 0 0 1px rgba(200, 162, 77, 0.18), 0 0 48px -12px rgba(165, 180, 252, 0.12);
+  --shadow-gold: 0 12px 32px -6px rgba(200, 162, 77, 0.4), 0 4px 14px rgba(0, 8, 20, 0.55);
+}
+
+@layer base {
+  :root {
+    --navy-deep: #000814;
+    --navy-silk: #001529;
+    --navy-shine: #002b5c;
+    --text-silk: #a5b4fc;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    scroll-behavior: smooth;
+  }
+
+  /**
+   * Velvet + gloss: deep folded fabric with gold wrapped from below,
+   * subtle weave, animated sheen (respects reduced motion).
+   */
+  body {
+    margin: 0;
+    min-height: 100svh;
+    color: var(--color-cridora-text);
+    -webkit-font-smoothing: antialiased;
+    background-color: #02040a;
+    background-image: radial-gradient(
+        ellipse 120% 90% at 50% 115%,
+        rgba(200, 162, 77, 0.16) 0%,
+        rgba(120, 90, 40, 0.04) 28%,
+        transparent 52%
+      ),
+      radial-gradient(ellipse 70% 55% at 92% 8%, rgba(232, 201, 122, 0.07) 0%, transparent 55%),
+      radial-gradient(ellipse 65% 50% at 5% 18%, rgba(0, 43, 92, 0.5) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 70% 35%, rgba(30, 25, 70, 0.2) 0%, transparent 50%),
+      linear-gradient(
+        155deg,
+        #000814 0%,
+        #060a14 18%,
+        #030816 38%,
+        #0a0e22 58%,
+        #020510 78%,
+        #000814 100%
+      ),
+      repeating-linear-gradient(
+        -18deg,
+        transparent 0px,
+        transparent 5px,
+        rgba(0, 0, 0, 0.035) 5px,
+        rgba(0, 0, 0, 0.035) 6px
+      );
+    background-blend-mode: screen, normal, multiply, normal, normal, multiply;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      122deg,
+      transparent 0%,
+      transparent 38%,
+      rgba(255, 252, 248, 0.028) 47%,
+      rgba(232, 201, 122, 0.09) 50.5%,
+      rgba(255, 252, 248, 0.02) 54%,
+      transparent 63%,
+      transparent 100%
+    );
+    background-size: 280% 280%;
+    opacity: 0.85;
+    animation: velvet-sheen 22s ease-in-out infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body::before {
+      animation: none;
+      opacity: 0.55;
+    }
+  }
+
+  @keyframes velvet-sheen {
+    0% {
+      background-position: 8% 35%;
+    }
+    100% {
+      background-position: 92% 65%;
+    }
+  }
+
+  #root {
+    position: relative;
+    z-index: 1;
+    min-height: 100svh;
+  }
+
+  ::selection {
+    background: rgba(200, 162, 77, 0.28);
+    color: #f8fafc;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(
+      135deg,
+      var(--color-cridora-gold-light) 0%,
+      var(--color-cridora-gold) 45%,
+      #b8893b 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@layer components {
+  .gold-line {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.65rem;
+  }
+
+  .gold-line::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 2.75rem;
+    height: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(
+      90deg,
+      var(--color-cridora-gold) 0%,
+      var(--color-cridora-gold-light) 55%,
+      transparent 100%
+    );
+    opacity: 0.9;
+  }
+
+  .gold-line[data-align="center"]::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .gold-line[data-align="left"]::after {
+    left: 0;
+    transform: none;
+  }
+
+  /** Hero / premium glass: gold-veined frame */
+  .ui-glass-gold-frame {
+    border-radius: 1.75rem;
+    padding: 1px;
+    background: linear-gradient(
+      145deg,
+      rgba(200, 162, 77, 0.55) 0%,
+        rgba(232, 201, 122, 0.12) 35%,
+        rgba(165, 180, 252, 0.12) 65%,
+        rgba(200, 162, 77, 0.25) 100%
+    );
+    box-shadow: 0 24px 80px -20px rgba(0, 8, 20, 0.75), 0 0 0 1px rgba(200, 162, 77, 0.08);
+  }
+
+  .ui-glass-gold-inner {
+    border-radius: calc(1.75rem - 1px);
+    background: linear-gradient(165deg, rgba(0, 21, 41, 0.82) 0%, rgba(0, 8, 20, 0.92) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /** Marketplace / marketing cards */
+  .ui-card {
+    @apply cursor-default rounded-3xl border border-cridora-border/80 shadow-[var(--shadow-card)] backdrop-blur-md;
+    background: linear-gradient(
+      155deg,
+      rgba(0, 21, 41, 0.72) 0%,
+      rgba(0, 8, 20, 0.55) 100%
+    );
+    @apply transition-all duration-300 ease-out;
+    @apply hover:-translate-y-1 hover:border-cridora-gold/28 hover:shadow-[var(--shadow-card-hover)];
+    @apply motion-reduce:transition-none motion-reduce:hover:translate-y-0;
+  }
+
+  /** Primary CTA — gold on ink */
+  .ui-btn-primary {
+    @apply inline-flex cursor-pointer items-center justify-center rounded-2xl bg-cridora-gold px-6 text-sm font-semibold text-cridora-ink;
+    @apply shadow-[var(--shadow-gold)] transition-all duration-300 ease-out;
+    @apply hover:-translate-y-0.5 hover:brightness-[1.05];
+    @apply active:translate-y-0 active:scale-[0.98] active:brightness-[0.98];
+    @apply motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100;
+  }
+
+  /** Secondary — silk outline, dashboard-style */
+  .ui-btn-secondary {
+    @apply inline-flex cursor-pointer items-center justify-center rounded-2xl border border-cridora-border px-6 text-sm font-medium text-cridora-text;
+    @apply transition-all duration-300 ease-out;
+    @apply hover:-translate-y-0.5 hover:border-silk/35 hover:bg-navy-shine/40 hover:shadow-[var(--shadow-card)];
+    @apply active:translate-y-0 active:scale-[0.99];
+    @apply motion-reduce:transition-none motion-reduce:hover:translate-y-0;
+  }
+
+  /** Nav pill / ghost control */
+  .ui-control-ghost {
+    @apply cursor-pointer rounded-2xl border border-cridora-border text-cridora-text;
+    @apply transition-all duration-300 ease-out;
+    @apply hover:border-silk/40 hover:bg-navy-shine/35 hover:shadow-[0_4px_20px_rgba(0,8,20,0.35)];
+    @apply active:scale-[0.97];
+  }
+
+  /** Form fields */
+  .ui-input {
+    @apply min-h-12 w-full rounded-2xl border border-cridora-border bg-navy-deep/80 px-4 text-sm text-cridora-text placeholder:text-cridora-muted/70;
+    @apply transition-all duration-200 ease-out;
+    @apply hover:border-silk/25;
+    @apply focus:border-cridora-gold focus:outline-none focus:ring-2 focus:ring-cridora-gold/30;
+  }
+
+  /** Inline link — marketplace */
+  .ui-link-foot {
+    @apply inline-block cursor-pointer text-cridora-text transition-all duration-300 ease-out;
+    @apply hover:translate-x-1 hover:text-cridora-gold-light;
+  }
+
+  /** Compact row (capability chips, table-like) */
+  .ui-row-interactive {
+    @apply flex cursor-default gap-3 rounded-2xl border border-cridora-border/90 px-4 py-3 text-sm text-cridora-text backdrop-blur-sm;
+    background: linear-gradient(160deg, rgba(0, 21, 41, 0.65) 0%, rgba(0, 15, 30, 0.5) 100%);
+    @apply transition-all duration-300 ease-out;
+    @apply hover:-translate-y-0.5 hover:border-silk/20 hover:bg-navy-shine/25 hover:shadow-[var(--shadow-card)];
+    @apply motion-reduce:transition-none motion-reduce:hover:translate-y-0;
+  }
+}
