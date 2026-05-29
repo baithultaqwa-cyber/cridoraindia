@@ -1,0 +1,434 @@
+@import "tailwindcss";
+
+/* Core palette — marketplace + dashboard */
+@theme {
+  --color-navy-deep: #000814;
+  --color-navy-silk: #001529;
+  --color-navy-shine: #002b5c;
+  --color-silk: #a5b4fc;
+
+  /* Semantic aliases (use in components) */
+  --color-cridora-ink: #000814;
+  --color-cridora-bg: #000814;
+  --color-cridora-surface: #001529;
+  --color-cridora-surface-2: #002b5c;
+  --color-cridora-border: #143d66;
+  --color-cridora-text: #f0f4ff;
+  --color-cridora-muted: #a5b4fc;
+  --color-cridora-gold: #c8a24d;
+  --color-cridora-gold-light: #e8c97a;
+  --color-cridora-success: #1fa971;
+  --color-cridora-warning: #f0b429;
+  --color-cridora-error: #d9534f;
+
+  /* Merchant light-on-card palette (headings on white / cream panels) */
+  --color-cridora-navy: #0c1428;
+  --color-cridora-sand: #d8dee9;
+  --color-cridora-cream: #f1f4fb;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+
+  --shadow-card: 0 8px 32px rgba(0, 8, 20, 0.45), 0 0 0 1px rgba(165, 180, 252, 0.06);
+  --shadow-card-hover: 0 20px 50px -12px rgba(0, 43, 92, 0.65),
+    0 0 0 1px rgba(200, 162, 77, 0.18), 0 0 48px -12px rgba(165, 180, 252, 0.12);
+  --shadow-gold: 0 12px 32px -6px rgba(200, 162, 77, 0.4), 0 4px 14px rgba(0, 8, 20, 0.55);
+
+  /* Dashboard chrome (sidebar + header) — layered like role dashboards */
+  --dash-sidebar: rgba(0, 8, 20, 0.92);
+  --dash-sidebar-border: rgba(165, 180, 252, 0.12);
+  --dash-header: rgba(0, 8, 20, 0.78);
+  --dash-tabs: rgba(0, 21, 41, 0.55);
+  --dash-main: transparent;
+}
+
+@layer base {
+  :root {
+    --navy-deep: #000814;
+    --navy-silk: #001529;
+    --navy-shine: #002b5c;
+    --text-silk: #a5b4fc;
+    --ease-premium: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  html {
+    font-family: var(--font-sans);
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  /**
+   * Stable background (no blend-modes / animated overlays — those caused blank UI on some GPUs).
+   */
+  body {
+    margin: 0;
+    min-height: 100svh;
+    color: var(--color-cridora-text);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    background-color: #000814;
+    background-image: linear-gradient(
+      165deg,
+      #000814 0%,
+      #060a14 22%,
+      #030816 48%,
+      #0a0e22 72%,
+      #000814 100%
+    );
+  }
+
+  #root {
+    min-height: 100svh;
+  }
+
+  ::selection {
+    background: rgba(200, 162, 77, 0.28);
+    color: #f8fafc;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(
+      135deg,
+      var(--color-cridora-gold-light) 0%,
+      var(--color-cridora-gold) 45%,
+      #b8893b 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  @keyframes cridora-gold-ticker {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .gold-rate-ticker-track {
+    width: max-content;
+    animation: cridora-gold-ticker 48s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gold-rate-ticker-track {
+      animation: none;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .gold-rate-ticker-track > div:last-child {
+      display: none;
+    }
+  }
+
+  .text-gradient-gold-live {
+    background: linear-gradient(
+      120deg,
+      var(--color-cridora-gold-light) 0%,
+      #f0d49a 35%,
+      var(--color-cridora-gold) 65%,
+      var(--color-cridora-gold-light) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: cridora-gold-text-shift 8s linear infinite;
+  }
+
+  @keyframes cridora-gold-text-shift {
+    to {
+      background-position: 200% center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .text-gradient-gold-live {
+      animation: none;
+      background-size: 100% auto;
+    }
+  }
+}
+
+@layer components {
+  .gold-line {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.65rem;
+  }
+
+  .gold-line::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 2.75rem;
+    height: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(
+      90deg,
+      var(--color-cridora-gold) 0%,
+      var(--color-cridora-gold-light) 55%,
+      transparent 100%
+    );
+    opacity: 0.9;
+  }
+
+  .gold-line[data-align="center"]::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .gold-line[data-align="left"]::after {
+    left: 0;
+    transform: none;
+  }
+
+  /** Hero / premium glass: gold-veined frame */
+  .ui-glass-gold-frame {
+    border-radius: 1.75rem;
+    padding: 1px;
+    background: linear-gradient(
+      145deg,
+      rgba(200, 162, 77, 0.55) 0%,
+        rgba(232, 201, 122, 0.12) 35%,
+        rgba(165, 180, 252, 0.12) 65%,
+        rgba(200, 162, 77, 0.25) 100%
+    );
+    box-shadow: 0 24px 80px -20px rgba(0, 8, 20, 0.75), 0 0 0 1px rgba(200, 162, 77, 0.08);
+    transition:
+      box-shadow 0.55s var(--ease-premium),
+      filter 0.55s ease;
+  }
+
+  .ui-glass-gold-frame:hover {
+    box-shadow:
+      0 28px 90px -18px rgba(0, 8, 20, 0.78),
+      0 0 0 1px rgba(200, 162, 77, 0.14),
+      0 0 72px -24px rgba(200, 162, 77, 0.12);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ui-glass-gold-frame {
+      transition: none;
+    }
+
+    .ui-glass-gold-frame:hover {
+      box-shadow: 0 24px 80px -20px rgba(0, 8, 20, 0.75), 0 0 0 1px rgba(200, 162, 77, 0.08);
+    }
+  }
+
+  .ui-glass-gold-inner {
+    border-radius: calc(1.75rem - 1px);
+    background: linear-gradient(165deg, rgba(0, 21, 41, 0.92) 0%, rgba(0, 8, 20, 0.96) 100%);
+  }
+
+  /** Marketplace / marketing cards */
+  .ui-card {
+    @apply cursor-default rounded-3xl border border-cridora-border/80 shadow-[var(--shadow-card)];
+    background: linear-gradient(
+      155deg,
+      rgba(0, 21, 41, 0.92) 0%,
+      rgba(0, 8, 20, 0.88) 100%
+    );
+    @apply transition-all duration-300 ease-out;
+    @apply hover:-translate-y-1 hover:border-cridora-gold/28 hover:shadow-[var(--shadow-card-hover)];
+    @apply motion-reduce:transition-none motion-reduce:hover:translate-y-0;
+  }
+
+  /** Primary CTA — gold on ink */
+  .ui-btn-primary {
+    @apply inline-flex cursor-pointer items-center justify-center rounded-2xl bg-cridora-gold px-6 text-sm font-semibold text-cridora-ink;
+    @apply shadow-[var(--shadow-gold)] transition-all duration-300 ease-out;
+    @apply hover:-translate-y-0.5 hover:brightness-[1.05];
+    @apply active:translate-y-0 active:scale-[0.98] active:brightness-[0.98];
+    @apply motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100;
+  }
+
+  /** Secondary — silk outline, dashboard-style */
+  .ui-btn-secondary {
+    @apply inline-flex cursor-pointer items-center justify-center rounded-2xl border border-cridora-border px-6 text-sm font-medium text-cridora-text;
+    @apply transition-all duration-300 ease-out;
+    @apply hover:-translate-y-0.5 hover:border-silk/35 hover:bg-navy-shine/40 hover:shadow-[var(--shadow-card)];
+    @apply active:translate-y-0 active:scale-[0.99];
+    @apply motion-reduce:transition-none motion-reduce:hover:translate-y-0;
+  }
+
+  /** Nav pill / ghost control */
+  .ui-control-ghost {
+    @apply cursor-pointer rounded-2xl border border-cridora-border text-cridora-text;
+    @apply transition-all duration-300 ease-out;
+    @apply hover:border-silk/40 hover:bg-navy-shine/35 hover:shadow-[0_4px_20px_rgba(0,8,20,0.35)];
+    @apply active:scale-[0.97];
+  }
+
+  /** Form fields */
+  .ui-input {
+    @apply min-h-12 w-full rounded-2xl border border-cridora-border bg-navy-deep/80 px-4 text-sm text-cridora-text placeholder:text-cridora-muted/70;
+    @apply transition-all duration-200 ease-out;
+    @apply hover:border-silk/25;
+    @apply focus:border-cridora-gold focus:outline-none focus:ring-2 focus:ring-cridora-gold/30;
+  }
+
+  /** Inline link — marketplace */
+  .ui-link-foot {
+    @apply relative inline-block cursor-pointer text-cridora-text transition-all duration-300 ease-out;
+    @apply hover:translate-x-1 hover:text-cridora-gold-light;
+  }
+
+  .ui-link-foot::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0;
+    height: 1px;
+    border-radius: 9999px;
+    background: linear-gradient(
+      90deg,
+      var(--color-cridora-gold-light),
+      var(--color-cridora-gold)
+    );
+    transition: width 0.4s var(--ease-premium);
+    pointer-events: none;
+  }
+
+  .ui-link-foot:hover::after {
+    width: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ui-link-foot::after {
+      display: none;
+    }
+  }
+
+  /** 3D tilt wrapper (see TiltSurface) */
+  .tilt-surface {
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tilt-surface {
+      transform: none !important;
+      will-change: auto;
+    }
+  }
+
+  /** Sticky marketing header: gold hairline + soft depth pulse */
+  .premium-header {
+    position: relative;
+  }
+
+  .premium-header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(200, 162, 77, 0.4),
+      transparent
+    );
+    opacity: 0.85;
+    pointer-events: none;
+  }
+
+  @keyframes premium-header-glow {
+    0%,
+    100% {
+      opacity: 0.65;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .premium-header::after {
+      animation: premium-header-glow 5s var(--ease-out-soft) infinite;
+    }
+  }
+
+  /** Card hover: gradient rim (no body-level blend modes) */
+  .ui-card-spotlight {
+    position: relative;
+  }
+
+  .ui-card-spotlight::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(200, 162, 77, 0.45),
+      rgba(165, 180, 252, 0.18),
+      rgba(184, 137, 59, 0.35)
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-premium);
+    pointer-events: none;
+  }
+
+  .ui-card-spotlight:hover::after {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .premium-header::after {
+      animation: none;
+    }
+
+    .ui-card-spotlight::after {
+      display: none;
+    }
+  }
+
+  /** Compact row (capability chips, table-like) */
+  .ui-row-interactive {
+    @apply flex cursor-default gap-3 rounded-2xl border border-cridora-border/90 px-4 py-3 text-sm text-cridora-text;
+    background: linear-gradient(160deg, rgba(0, 21, 41, 0.82) 0%, rgba(0, 15, 30, 0.72) 100%);
+    @apply transition-all duration-300 ease-out;
+    @apply hover:-translate-y-0.5 hover:border-silk/20 hover:bg-navy-shine/25 hover:shadow-[var(--shadow-card)];
+    @apply motion-reduce:transition-none motion-reduce:hover:translate-y-0;
+  }
+
+  /** Role dashboard: main content pad (v2-style rhythm) */
+  .dash-page {
+    @apply mx-auto min-w-0 w-full max-w-7xl px-3 py-5 sm:px-4 sm:py-6 md:px-6 md:py-8;
+  }
+
+  /** Marketing / legal: readable measure for body copy */
+  .public-prose {
+    @apply max-w-[42rem] text-base leading-relaxed text-cridora-muted sm:text-[1.0625rem] sm:leading-relaxed;
+  }
+
+  .public-prose-wide {
+    @apply max-w-3xl text-base leading-relaxed text-cridora-muted sm:text-lg sm:leading-relaxed;
+  }
+}

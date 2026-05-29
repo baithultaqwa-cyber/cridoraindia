@@ -1,0 +1,313 @@
+import React, { useState, useMemo } from 'react';
+import { 
+  Search, 
+  MapPin, 
+  SlidersHorizontal, 
+  Star, 
+  ShieldCheck, 
+  ChevronDown, 
+  ArrowRight, 
+  Zap, 
+  Percent, 
+  Building2,
+  Navigation,
+  CheckCircle2,
+  Lock,
+  ExternalLink,
+  Filter
+} from 'lucide-react';
+
+const App = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCity, setSelectedCity] = useState("All Cities");
+  const [sortBy, setSortBy] = useState("Popularity");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Simulated auth
+
+  const cities = ["All Cities", "Kochi", "Mumbai", "Bangalore", "Dubai", "Chennai"];
+  const sortOptions = ["Popularity", "Lowest Rate", "Highest Rating", "Making Charges"];
+
+  const jewellers = [
+    {
+      id: 1,
+      name: "Malabar Gold & Diamonds",
+      city: "Kochi",
+      location: "MG Road",
+      rating: 4.9,
+      baseRate: 7245,
+      makingCharge: "8.5%",
+      crossRedeem: true,
+      schemes: ["GoldNest 11+1", "Wedding Planner"],
+      verified: true,
+      image: "https://api.dicebear.com/7.x/initials/svg?seed=MG"
+    },
+    {
+      id: 2,
+      name: "Kalyan Jewellers",
+      city: "Mumbai",
+      location: "Andheri West",
+      rating: 4.7,
+      baseRate: 7260,
+      makingCharge: "10.0%",
+      crossRedeem: true,
+      schemes: ["Dhanvarsha", "Jewel Build"],
+      verified: true,
+      image: "https://api.dicebear.com/7.x/initials/svg?seed=KJ"
+    },
+    {
+      id: 3,
+      name: "Joyalukkas",
+      city: "Dubai",
+      location: "Gold Souk",
+      rating: 4.8,
+      baseRate: 7210,
+      makingCharge: "7.0%",
+      crossRedeem: false,
+      schemes: ["Easy Gold", "Elite Save"],
+      verified: true,
+      image: "https://api.dicebear.com/7.x/initials/svg?seed=JL"
+    },
+    {
+      id: 4,
+      name: "Tanishq",
+      city: "Bangalore",
+      location: "Indiranagar",
+      rating: 4.9,
+      baseRate: 7310,
+      makingCharge: "12.5%",
+      crossRedeem: true,
+      schemes: ["Golden Harvest"],
+      verified: true,
+      image: "https://api.dicebear.com/7.x/initials/svg?seed=TQ"
+    },
+    {
+      id: 5,
+      name: "Bhima Jewellers",
+      city: "Kochi",
+      location: "Edappally",
+      rating: 4.6,
+      baseRate: 7235,
+      makingCharge: "9.0%",
+      crossRedeem: true,
+      schemes: ["Bhima Gold Tree"],
+      verified: true,
+      image: "https://api.dicebear.com/7.x/initials/svg?seed=BJ"
+    }
+  ];
+
+  const filteredJewellers = useMemo(() => {
+    return jewellers
+      .filter(j => {
+        const matchesSearch = j.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            j.location.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCity = selectedCity === "All Cities" || j.city === selectedCity;
+        return matchesSearch && matchesCity;
+      })
+      .sort((a, b) => {
+        if (sortBy === "Lowest Rate") return a.baseRate - b.baseRate;
+        if (sortBy === "Highest Rating") return b.rating - a.rating;
+        return 0;
+      });
+  }, [searchQuery, selectedCity, sortBy]);
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-20">
+      {/* Header Section */}
+      <div className="bg-slate-950 text-white pt-12 pb-24 px-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-[100px] -mr-48 -mt-48"></div>
+        <div className="max-w-6xl mx-auto relative z-10">
+          <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-4 italic uppercase">
+            Find Your <span className="text-amber-500">GoldNest</span> Partner
+          </h1>
+          <p className="text-slate-400 max-w-2xl text-sm md:text-lg">
+            Search 2,400+ verified jewellers across the Cridora network. Filter by live rates, 
+            making charge transparency, and cross-redemption availability.
+          </p>
+        </div>
+      </div>
+
+      {/* Search & Filter Bar */}
+      <div className="max-w-6xl mx-auto px-4 -mt-10 relative z-20">
+        <div className="bg-white p-4 md:p-6 rounded-[32px] shadow-2xl border border-slate-200 shadow-slate-200/50">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            {/* Search Input */}
+            <div className="md:col-span-5 relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <input 
+                type="text"
+                placeholder="Search jeweller name or area..."
+                className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-amber-500/20 outline-none transition-all"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            {/* City Filter */}
+            <div className="md:col-span-3 relative">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <select 
+                className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 pl-12 pr-10 text-sm font-bold appearance-none outline-none focus:ring-2 focus:ring-amber-500/20"
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+              >
+                {cities.map(city => <option key={city} value={city}>{city}</option>)}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 pointer-events-none" />
+            </div>
+
+            {/* Sort Filter */}
+            <div className="md:col-span-3 relative">
+              <SlidersHorizontal className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <select 
+                className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 pl-12 pr-10 text-sm font-bold appearance-none outline-none focus:ring-2 focus:ring-amber-500/20"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                {sortOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 pointer-events-none" />
+            </div>
+
+            {/* Filter Toggle */}
+            <div className="md:col-span-1">
+              <button className="w-full h-full bg-slate-900 text-white rounded-2xl flex items-center justify-center hover:bg-slate-800 transition-all shadow-lg">
+                <Filter className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Tags */}
+          <div className="flex flex-wrap gap-2 mt-4">
+            {["0% Making", "Multi-City", "Instant Redeem", "Akshaya Tritiya Offers"].map(tag => (
+              <button key={tag} className="px-3 py-1 bg-slate-100 hover:bg-amber-50 hover:text-amber-700 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors border border-transparent hover:border-amber-200">
+                {tag}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Results Grid */}
+      <main className="max-w-6xl mx-auto px-4 mt-12">
+        <div className="flex justify-between items-center mb-8">
+          <p className="text-sm font-bold text-slate-500">
+            Showing <span className="text-slate-900">{filteredJewellers.length}</span> jewellers in {selectedCity}
+          </p>
+          <div className="flex gap-2">
+             <button onClick={() => setIsLoggedIn(!isLoggedIn)} className="text-[10px] font-black uppercase text-amber-600 border border-amber-200 px-3 py-1 rounded-lg">
+                {isLoggedIn ? "Member View Active" : "View as Guest"}
+             </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredJewellers.map((j) => (
+            <div key={j.id} className="bg-white rounded-[32px] border border-slate-200 overflow-hidden hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 group flex flex-col">
+              {/* Card Header with Image/Logo */}
+              <div className="h-40 bg-slate-100 relative p-6 flex items-end justify-between">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+                <div className="w-16 h-16 bg-white rounded-2xl shadow-xl flex items-center justify-center relative z-10 border border-slate-100 overflow-hidden">
+                   <img src={j.image} alt={j.name} className="w-full h-full opacity-80" />
+                </div>
+                <div className="relative z-10 text-right">
+                  <div className="flex items-center gap-1 bg-white/20 backdrop-blur-md px-2 py-1 rounded-lg border border-white/30 text-white text-[10px] font-black">
+                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" /> {j.rating}
+                  </div>
+                </div>
+              </div>
+
+              {/* Card Body */}
+              <div className="p-6 flex-1 flex flex-col">
+                <div className="mb-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-black text-lg text-slate-900 line-clamp-1">{j.name}</h3>
+                    {j.verified && <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />}
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium flex items-center gap-1 mt-1">
+                    <Navigation className="w-3 h-3" /> {j.location}, {j.city}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Live Rate</p>
+                    <p className="text-sm font-black italic text-slate-900">₹{j.baseRate.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Making Charge</p>
+                    {isLoggedIn ? (
+                      <p className="text-sm font-black text-green-600">{j.makingCharge}</p>
+                    ) : (
+                      <div className="flex items-center gap-1 text-[10px] font-black text-slate-400">
+                        <Lock className="w-3 h-3" /> Member Rate
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2 mb-6">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Available Schemes</p>
+                  <div className="flex flex-wrap gap-2">
+                    {j.schemes.map(s => (
+                      <span key={s} className="bg-blue-50 text-blue-600 px-2 py-1 rounded-md text-[10px] font-bold border border-blue-100">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Footer Action */}
+                <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {j.crossRedeem && (
+                      <div className="group/tip relative">
+                        <Zap className="w-5 h-5 text-amber-500 fill-current hover:scale-110 transition-transform cursor-help" />
+                        <span className="absolute bottom-full mb-2 left-0 bg-slate-900 text-white text-[9px] px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover/tip:opacity-100 transition-opacity">
+                          Supports Cross-Redemption
+                        </span>
+                      </div>
+                    )}
+                    <span className="text-[10px] font-bold text-slate-400 italic">Settlement: 24h</span>
+                  </div>
+                  <button className="bg-slate-900 group-hover:bg-amber-500 text-white group-hover:text-slate-950 p-3 rounded-xl transition-all shadow-lg shadow-slate-200">
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Empty State */}
+        {filteredJewellers.length === 0 && (
+          <div className="text-center py-20">
+             <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-10 h-10 text-slate-300" />
+             </div>
+             <h3 className="text-xl font-bold">No partners found</h3>
+             <p className="text-slate-500 text-sm">Try adjusting your filters or search query.</p>
+          </div>
+        )}
+      </main>
+
+      {/* Floating Network Insight */}
+      <div className="fixed bottom-8 right-8 hidden lg:block z-50">
+        <div className="bg-white p-4 rounded-3xl shadow-2xl border border-slate-100 max-w-[280px]">
+           <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase">Cridora Verified</p>
+                <p className="text-xs font-black">Physical Audit Done</p>
+              </div>
+           </div>
+           <p className="text-[10px] text-slate-500 leading-tight">
+             All listed jewellers have passed the <strong>BRINKS Physical Custody Audit</strong> for Q1 2025.
+           </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default App;

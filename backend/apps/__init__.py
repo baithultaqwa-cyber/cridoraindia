@@ -1,0 +1,1 @@
+# Cridora Django application packages

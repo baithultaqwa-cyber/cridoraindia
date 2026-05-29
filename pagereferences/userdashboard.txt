@@ -1,0 +1,626 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  LayoutGrid, 
+  History, 
+  ArrowUpRight, 
+  ArrowDownLeft, 
+  Repeat, 
+  Gem, 
+  Search, 
+  MapPin, 
+  ShieldCheck, 
+  TrendingUp, 
+  TrendingDown,
+  Wallet,
+  Coins,
+  Store,
+  ChevronRight,
+  ArrowRight,
+  User,
+  Bell,
+  Scale,
+  Zap,
+  Banknote,
+  HandCoins,
+  ArrowLeftRight,
+  Settings,
+  LogOut,
+  CreditCard,
+  Smartphone,
+  CheckCircle2,
+  Lock,
+  Globe,
+  Gift,
+  ArrowRightLeft,
+  Info,
+  Scale as ScaleIcon
+} from 'lucide-react';
+
+// --- LOGO COMPONENT ---
+const CridoraLogo = ({ className }) => (
+  <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="48" stroke="currentColor" strokeWidth="4" strokeOpacity="0.2"/>
+    <path d="M50 20C33.4315 20 20 33.4315 20 50C20 66.5685 33.4315 80 50 80V50L75 25" stroke="#F59E0B" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="50" cy="50" r="10" fill="currentColor"/>
+  </svg>
+);
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState('portfolio');
+  const [view, setView] = useState('main'); // main, jwellers, redeem, gifting, cashout, loan, physical
+  const [selectedOtherJeweller, setSelectedOtherJeweller] = useState(null);
+  
+  const liveRate = 7245.50;
+  const homeJeweller = { name: "Malabar Gold", spread: 0.03, processingFee: 0.02, loanLTV: 0.75 };
+  
+  const portfolio = {
+    totalGold: 24.850,
+    holdings: [
+      { id: 1, type: 'Fractional', grams: 5.250, label: 'Standard Buy' },
+      { id: 2, type: 'Deposit', grams: 12.000, label: 'Safe Vault' },
+      { id: 3, type: 'GoldNest', grams: 7.600, label: 'Monthly Scheme' }
+    ]
+  };
+
+  const jewellers = [
+    { id: 'J001', name: 'Malabar Gold', location: 'Dubai Mall', score: 98, fee: 0, deals: '0% Making on Coins' },
+    { id: 'J002', name: 'Tanishq', location: 'MG Road', score: 95, fee: 0.015, deals: 'Flat 5% Off Diamond' },
+    { id: 'J003', name: 'Kalyan Jewellers', location: 'Deira', score: 92, fee: 0.015, deals: 'Exchange Bonus +1%' },
+  ];
+
+  // --- CALCULATIONS ---
+  const totalValue = portfolio.totalGold * liveRate;
+  const cashOutValue = totalValue * (1 - homeJeweller.spread);
+  const maxLoan = totalValue * homeJeweller.loanLTV;
+  const loanFee = maxLoan * homeJeweller.processingFee;
+
+  // --- SUB-VIEWS ---
+
+  const RedemptionView = () => (
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex justify-between items-center mb-10">
+        <div>
+          <h2 className="text-4xl font-black italic uppercase tracking-tighter">Redemption Hub</h2>
+          <p className="text-slate-500 text-sm font-bold uppercase tracking-widest mt-1">Select Liquidation Method</p>
+        </div>
+        <div className="bg-amber-500/10 border border-amber-500/20 px-6 py-3 rounded-2xl">
+          <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Available Balance</p>
+          <p className="text-xl font-black text-white italic">{portfolio.totalGold.toFixed(3)}g</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Cash Out Card */}
+        <div 
+          onClick={() => setView('cashout')}
+          className="bg-white/5 border border-white/5 p-8 rounded-[40px] hover:bg-white/10 transition-all cursor-pointer group"
+        >
+          <div className="flex justify-between items-start mb-6">
+            <div className="w-14 h-14 bg-green-500/20 rounded-2xl flex items-center justify-center text-green-500">
+              <Banknote className="w-7 h-7" />
+            </div>
+            <span className="bg-white/10 text-[9px] font-black px-3 py-1 rounded-full uppercase">Instant Settlement</span>
+          </div>
+          <h3 className="text-2xl font-black mb-2">Cash Out</h3>
+          <p className="text-slate-500 text-sm mb-6 leading-relaxed">Sell back to Cridora Network at 3% spread below market.</p>
+          <div className="bg-black/40 rounded-2xl p-4 border border-white/5">
+            <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Est. Receivable</p>
+            <p className="text-2xl font-black text-green-400">₹{cashOutValue.toLocaleString(undefined, {maximumFractionDigits:0})}</p>
+          </div>
+        </div>
+
+        {/* Loan Card */}
+        <div 
+          onClick={() => setView('loan')}
+          className="bg-white/5 border border-white/5 p-8 rounded-[40px] hover:bg-white/10 transition-all cursor-pointer group"
+        >
+          <div className="flex justify-between items-start mb-6">
+            <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-500">
+              <HandCoins className="w-7 h-7" />
+            </div>
+            <span className="bg-blue-500/20 text-blue-400 text-[9px] font-black px-3 py-1 rounded-full uppercase">0% Interest</span>
+          </div>
+          <h3 className="text-2xl font-black mb-2">Gold Loan</h3>
+          <p className="text-slate-500 text-sm mb-6 leading-relaxed">Get instant liquidity without selling your gold.</p>
+          <div className="bg-black/40 rounded-2xl p-4 border border-white/5">
+            <p className="text-[10px] font-black text-slate-500 uppercase mb-1">Max Credit Line</p>
+            <p className="text-2xl font-black text-blue-400">₹{maxLoan.toLocaleString(undefined, {maximumFractionDigits:0})}</p>
+          </div>
+        </div>
+
+        {/* Physical Jewelry Card */}
+        <div 
+          onClick={() => setView('physical')}
+          className="bg-white/5 border border-white/5 p-8 rounded-[40px] hover:bg-white/10 transition-all cursor-pointer group"
+        >
+          <div className="flex justify-between items-start mb-6">
+            <div className="w-14 h-14 bg-amber-500/20 rounded-2xl flex items-center justify-center text-amber-500">
+              <Gem className="w-7 h-7" />
+            </div>
+            <span className="bg-amber-500/20 text-amber-500 text-[9px] font-black px-3 py-1 rounded-full uppercase">Home Jeweller Active</span>
+          </div>
+          <h3 className="text-2xl font-black mb-2">Redeem Ornaments</h3>
+          <p className="text-slate-500 text-sm mb-6 leading-relaxed">Convert digital balance to physical jewelry at stores.</p>
+          <div className="flex gap-2">
+            <span className="bg-white/5 text-[10px] font-bold px-3 py-1.5 rounded-lg border border-white/5">Malabar: 0% Fee</span>
+            <span className="bg-white/5 text-[10px] font-bold px-3 py-1.5 rounded-lg border border-white/5">Others: 1.5% Fee</span>
+          </div>
+        </div>
+
+        {/* Gifting Card */}
+        <div 
+          onClick={() => setView('gifting')}
+          className="bg-white/5 border border-white/5 p-8 rounded-[40px] hover:bg-white/10 transition-all cursor-pointer group"
+        >
+          <div className="flex justify-between items-start mb-6">
+            <div className="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center text-purple-500">
+              <Gift className="w-7 h-7" />
+            </div>
+            <span className="bg-purple-500/20 text-purple-400 text-[9px] font-black px-3 py-1 rounded-full uppercase">Zero Tax</span>
+          </div>
+          <h3 className="text-2xl font-black mb-2">Gift Gold</h3>
+          <p className="text-slate-500 text-sm mb-6 leading-relaxed">Send gold instantly to family or friends within Cridora.</p>
+          <button className="text-purple-400 text-xs font-black uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">Start Transfer <ArrowRight className="w-4 h-4" /></button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const LoanFlow = () => (
+    <div className="max-w-2xl mx-auto animate-in zoom-in-95 duration-300">
+      <button onClick={() => setView('main')} className="mb-8 text-slate-500 text-[10px] font-black uppercase flex items-center gap-2"><ArrowLeftRight className="rotate-225 w-4 h-4" /> Back to Hub</button>
+      <div className="bg-white/5 border border-white/10 rounded-[48px] p-10">
+        <h2 className="text-3xl font-black italic mb-2">Instant Gold Loan</h2>
+        <p className="text-slate-500 text-sm mb-10">Use your {portfolio.totalGold}g as collateral for immediate cash.</p>
+        
+        <div className="space-y-6">
+          <div className="bg-black/50 p-6 rounded-3xl border border-white/5">
+             <div className="flex justify-between mb-4">
+                <span className="text-xs font-bold text-slate-400">Available Loan (75% LTV)</span>
+                <span className="text-xs font-black text-white">₹{maxLoan.toLocaleString()}</span>
+             </div>
+             <div className="flex justify-between mb-4">
+                <span className="text-xs font-bold text-slate-400">Processing Fee (2%)</span>
+                <span className="text-xs font-black text-red-400">-₹{loanFee.toLocaleString()}</span>
+             </div>
+             <div className="pt-4 border-t border-white/10 flex justify-between">
+                <span className="text-sm font-black uppercase text-amber-500">Net Disbursal</span>
+                <span className="text-2xl font-black text-white">₹{(maxLoan - loanFee).toLocaleString()}</span>
+             </div>
+          </div>
+
+          <div className="bg-blue-500/10 border border-blue-500/20 p-6 rounded-3xl flex items-start gap-4">
+             <Info className="w-5 h-5 text-blue-500 mt-1" />
+             <p className="text-[11px] text-blue-300 leading-relaxed font-medium">
+               This is a 0% interest loan for 3 months. Your gold will be locked in the Cridora Secure Vault until repayment. If unpaid, the gold will be liquidated to settle the balance.
+             </p>
+          </div>
+
+          <button className="w-full bg-blue-500 text-white py-6 rounded-3xl font-black text-xl hover:bg-blue-400 transition-all shadow-xl shadow-blue-500/20">Apply for Disbursal</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const PhysicalRedeem = () => (
+    <div className="animate-in fade-in duration-300">
+      <button onClick={() => setView('main')} className="mb-8 text-slate-500 text-[10px] font-black uppercase flex items-center gap-2"><ArrowLeftRight className="rotate-225 w-4 h-4" /> Back</button>
+      
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Left: Current Comparison */}
+        <div className="flex-1 space-y-6">
+          <h2 className="text-3xl font-black italic mb-6">Cross-Platform Redemption</h2>
+          
+          <div className="bg-white/5 border border-white/5 rounded-[40px] p-8">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Home Jeweller</p>
+                <h3 className="text-2xl font-black">{homeJeweller.name}</h3>
+              </div>
+              <div className="text-right">
+                 <p className="text-[10px] font-black text-green-500 uppercase tracking-widest mb-1">Network Fee</p>
+                 <p className="text-2xl font-black">0%</p>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+               <div className="flex justify-between text-xs font-bold p-4 bg-black/40 rounded-2xl">
+                 <span className="text-slate-400">Current Rate / g</span>
+                 <span>₹{liveRate.toLocaleString()}</span>
+               </div>
+               <div className="flex justify-between text-xs font-bold p-4 bg-black/40 rounded-2xl border border-amber-500/20">
+                 <span className="text-amber-500">Live Deal</span>
+                 <span>No Making Charges on 22K</span>
+               </div>
+            </div>
+          </div>
+
+          <div className="bg-white/5 border border-white/5 rounded-[40px] p-8">
+            <h4 className="text-sm font-black uppercase tracking-widest mb-6 text-slate-500">Compare Other Vendors</h4>
+            <div className="grid grid-cols-1 gap-4">
+              {jewellers.filter(j => j.name !== homeJeweller.name).map(j => (
+                <div 
+                  key={j.id} 
+                  onClick={() => setSelectedOtherJeweller(j)}
+                  className={`p-6 rounded-3xl border transition-all cursor-pointer ${selectedOtherJeweller?.id === j.id ? 'bg-white/10 border-amber-500/50' : 'bg-black/40 border-white/5 hover:bg-white/5'}`}
+                >
+                   <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-black text-lg">{j.name}</p>
+                        <p className="text-[10px] text-slate-500 font-bold">{j.location}</p>
+                      </div>
+                      <div className="text-right">
+                         <p className="text-[10px] font-black text-red-400 uppercase">Cross-Fee: {(j.fee * 100).toFixed(1)}%</p>
+                         <p className="text-[10px] text-amber-500 font-bold uppercase mt-1">{j.deals}</p>
+                      </div>
+                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Checkout Sidebar */}
+        <div className="lg:w-96">
+           <div className="bg-amber-500 text-slate-950 p-8 rounded-[48px] sticky top-32">
+              <h4 className="text-xl font-black italic mb-6 uppercase tracking-tighter">Redemption Summary</h4>
+              <div className="space-y-4 mb-8">
+                 <div className="flex justify-between text-[10px] font-black uppercase border-b border-black/10 pb-2">
+                    <span>Vendor</span>
+                    <span>{selectedOtherJeweller ? selectedOtherJeweller.name : homeJeweller.name}</span>
+                 </div>
+                 <div className="flex justify-between text-[10px] font-black uppercase border-b border-black/10 pb-2">
+                    <span>Network Fee</span>
+                    <span>{selectedOtherJeweller ? `${(selectedOtherJeweller.fee * 100).toFixed(1)}%` : '0%'}</span>
+                 </div>
+                 <div className="flex justify-between text-[10px] font-black uppercase border-b border-black/10 pb-2">
+                    <span>Processing</span>
+                    <span>Instant</span>
+                 </div>
+              </div>
+              
+              <div className="mb-10">
+                 <p className="text-[10px] font-black uppercase opacity-60 mb-1">Effective Grams for Ornament</p>
+                 <p className="text-4xl font-black italic tracking-tighter">
+                   {selectedOtherJeweller 
+                    ? (portfolio.totalGold * (1 - selectedOtherJeweller.fee)).toFixed(3) 
+                    : portfolio.totalGold.toFixed(3)
+                   }g
+                 </p>
+              </div>
+
+              <button className="w-full bg-slate-950 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all">Generate QR Code</button>
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const GiftFlow = () => (
+    <div className="max-w-xl mx-auto animate-in slide-in-from-bottom-8 duration-500">
+       <div className="text-center mb-10">
+          <div className="w-20 h-20 bg-purple-500/20 rounded-full flex items-center justify-center text-purple-500 mx-auto mb-6">
+             <Gift className="w-10 h-10" />
+          </div>
+          <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-2">Gift Pure Gold</h2>
+          <p className="text-slate-500 text-sm font-medium">Send digital gold to any phone number or Cridora ID instantly.</p>
+       </div>
+
+       <div className="bg-white/5 border border-white/5 rounded-[48px] p-10 space-y-8">
+          <div>
+             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 block">Recipient Details</label>
+             <input type="text" placeholder="Phone, Email or CRID_ID" className="w-full bg-black/40 border border-white/10 p-6 rounded-2xl text-xl font-black outline-none focus:border-purple-500 transition-all" />
+          </div>
+          <div>
+             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 block">Amount in Grams</label>
+             <div className="relative">
+                <input type="number" placeholder="0.000" className="w-full bg-black/40 border border-white/10 p-6 rounded-2xl text-4xl font-black outline-none focus:border-purple-500 transition-all" />
+                <span className="absolute right-6 top-1/2 -translate-y-1/2 font-black text-slate-700 text-2xl italic">g</span>
+             </div>
+          </div>
+          <button className="w-full bg-purple-600 text-white py-6 rounded-3xl font-black text-lg hover:bg-purple-500 transition-all shadow-xl shadow-purple-500/20">Send Gift Now</button>
+       </div>
+    </div>
+  );
+
+  const CashOutFlow = () => (
+    <div className="max-w-2xl mx-auto animate-in zoom-in-95 duration-300">
+      <button onClick={() => setView('main')} className="mb-8 text-slate-500 text-[10px] font-black uppercase flex items-center gap-2"><ArrowLeftRight className="rotate-225 w-4 h-4" /> Back</button>
+      <div className="bg-white/5 border border-white/10 rounded-[48px] p-10">
+        <h2 className="text-3xl font-black italic mb-2">Sell Back to Network</h2>
+        <p className="text-slate-500 text-sm mb-10">Convert your gold directly into your linked bank account.</p>
+        
+        <div className="space-y-6">
+          <div className="bg-black/50 p-8 rounded-3xl border border-white/5">
+             <div className="flex justify-between mb-4 items-center">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Market Value</span>
+                <span className="text-xl font-black text-white">₹{totalValue.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+             </div>
+             <div className="flex justify-between mb-4 items-center">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Network Spread (3%)</span>
+                <span className="text-lg font-black text-red-400">-₹{(totalValue * 0.03).toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+             </div>
+             <div className="pt-6 border-t border-white/10 flex justify-between items-center">
+                <span className="text-sm font-black uppercase text-green-500 tracking-wider">Final Cash Value</span>
+                <span className="text-4xl font-black text-white italic">₹{cashOutValue.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+             </div>
+          </div>
+
+          <div className="flex items-center gap-4 bg-white/5 p-6 rounded-3xl border border-white/5">
+             <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center"><CreditCard className="w-6 h-6 text-slate-500" /></div>
+             <div>
+                <p className="text-[10px] font-black text-slate-500 uppercase">Settlement Bank</p>
+                <p className="text-sm font-bold">HDFC Bank •••• 9012</p>
+             </div>
+             <button className="ml-auto text-[10px] font-black text-amber-500 uppercase">Change</button>
+          </div>
+
+          <button className="w-full bg-green-600 text-white py-6 rounded-3xl font-black text-xl hover:bg-green-500 transition-all shadow-xl shadow-green-500/20">Confirm Sell Back</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // --- CONTENT ROUTING ---
+  const renderContent = () => {
+    if (view === 'redeem') return <RedemptionView />;
+    if (view === 'gifting') return <GiftFlow />;
+    if (view === 'loan') return <LoanFlow />;
+    if (view === 'cashout') return <CashOutFlow />;
+    if (view === 'physical') return <PhysicalRedeem />;
+    
+    switch (activeTab) {
+      case 'portfolio': return <PortfolioView />;
+      case 'history': return <LedgerView />;
+      case 'profile': return <ProfileView />;
+      default: return <PortfolioView />;
+    }
+  };
+
+  const PortfolioView = () => (
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="relative bg-gradient-to-br from-amber-500 to-amber-700 rounded-[40px] p-10 overflow-hidden mb-10 shadow-2xl shadow-amber-500/20 group">
+        <div className="absolute -top-10 -right-10 opacity-10 group-hover:scale-110 transition-transform duration-1000">
+          <CridoraLogo className="w-96 h-96" />
+        </div>
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-4 opacity-70">
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-900">Total Accumulation</span>
+            <ShieldCheck className="w-3 h-3 text-slate-900" />
+          </div>
+          <h2 className="text-6xl md:text-7xl font-black text-slate-950 mb-8 tracking-tighter">
+            {portfolio.totalGold.toFixed(3)}
+            <span className="text-3xl ml-2 uppercase italic">g</span>
+          </h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-black/10 backdrop-blur-md rounded-3xl p-6 border border-white/10 hover:bg-black/20 transition-all">
+              <p className="text-slate-900/50 text-[10px] font-black uppercase tracking-widest mb-1">Market Value</p>
+              <p className="text-2xl font-black text-slate-950 tracking-tight">₹{totalValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</p>
+            </div>
+            <div className="bg-black/10 backdrop-blur-md rounded-3xl p-6 border border-white/10 hover:bg-black/20 transition-all">
+              <p className="text-slate-900/50 text-[10px] font-black uppercase tracking-widest mb-1">Unrealized P/L</p>
+              <div className="flex items-center gap-2">
+                <p className="text-2xl font-black text-slate-950 tracking-tight">+14.2%</p>
+                <TrendingUp className="w-5 h-5 text-slate-950" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 className="text-xl font-black mb-6 px-2 italic uppercase tracking-wider">Asset Distribution</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-10">
+        {portfolio.holdings.map(h => (
+          <div key={h.id} className="bg-white/5 border border-white/5 p-6 rounded-[32px] flex items-center justify-between lg:flex-col lg:items-start lg:gap-6 group hover:bg-white/10 transition-all cursor-pointer">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-amber-500 border border-white/5 group-hover:rotate-12 transition-transform">
+                {h.type === 'GoldNest' ? <Coins className="w-6 h-6" /> : h.type === 'Deposit' ? <Lock className="w-5 h-5" /> : <Gem className="w-6 h-6" />}
+              </div>
+              <div>
+                <h4 className="font-black text-sm">{h.label}</h4>
+                <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{h.type}</p>
+              </div>
+            </div>
+            <div className="text-right lg:text-left">
+              <p className="font-black text-2xl tracking-tighter">{h.grams.toFixed(3)}g</p>
+              <p className="text-[10px] text-green-500 font-bold">₹{(h.grams * liveRate).toLocaleString(undefined, {maximumFractionDigits: 0})}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const LedgerView = () => (
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex justify-between items-end mb-8">
+         <h2 className="text-3xl font-black italic uppercase">Digital Ledger</h2>
+         <button className="bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">Export PDF</button>
+      </div>
+
+      <div className="bg-white/5 border border-white/5 rounded-[40px] overflow-hidden">
+        <div className="p-4 bg-white/5 border-b border-white/10 grid grid-cols-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+           <span className="pl-4">Description</span>
+           <span className="text-center">Scheme</span>
+           <span className="text-center">Status</span>
+           <span className="text-right pr-4">Amount</span>
+        </div>
+        <div className="divide-y divide-white/5">
+          {[
+            { id: 'T001', date: '24 May', type: 'Credit', amount: 1.250, scheme: 'GoldNest', status: 'Completed', ref: 'Ref #9921' },
+            { id: 'T002', date: '21 May', type: 'Gift', amount: -0.500, scheme: 'Fractional', status: 'Sent', ref: 'To: Rahul K.' },
+          ].map(t => (
+            <div key={t.id} className="p-6 grid grid-cols-4 items-center hover:bg-white/5 transition-all cursor-pointer group">
+               <div className="flex items-center gap-4">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${t.type === 'Credit' ? 'bg-green-500/10 text-green-500' : 'bg-purple-500/10 text-purple-500'}`}>
+                     {t.type === 'Credit' ? <ArrowDownLeft className="w-5 h-5" /> : <Gift className="w-5 h-5" />}
+                  </div>
+                  <div>
+                    <p className="text-sm font-black">{t.ref}</p>
+                    <p className="text-[10px] text-slate-500">{t.date}</p>
+                  </div>
+               </div>
+               <div className="text-center">
+                  <span className="text-[10px] font-black uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">{t.scheme}</span>
+               </div>
+               <div className="flex justify-center text-xs font-bold text-slate-400">
+                  <CheckCircle2 className="w-3 h-3 text-green-500 mr-2" /> {t.status}
+               </div>
+               <div className="text-right pr-4">
+                  <p className={`font-black text-lg tracking-tighter ${t.amount > 0 ? 'text-green-400' : 'text-white'}`}>{t.amount > 0 ? '+' : ''}{t.amount.toFixed(3)}g</p>
+               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const ProfileView = () => (
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+       <div className="flex items-center gap-8 mb-12 bg-white/5 p-10 rounded-[48px] border border-white/5">
+          <div className="relative">
+             <div className="w-32 h-32 rounded-full bg-gradient-to-tr from-amber-500 to-amber-200 p-1">
+                <div className="w-full h-full bg-slate-900 rounded-full flex items-center justify-center overflow-hidden">
+                   <User className="w-16 h-16 text-amber-500" />
+                </div>
+             </div>
+             <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-blue-500 rounded-full border-4 border-slate-950 flex items-center justify-center"><ShieldCheck className="w-5 h-5 text-white" /></div>
+          </div>
+          <div>
+             <h2 className="text-4xl font-black italic tracking-tighter mb-2">John Doe</h2>
+             <p className="text-slate-500 font-bold mb-4 flex items-center gap-2"><span className="bg-white/10 px-3 py-1 rounded-lg text-xs tracking-widest uppercase">ID: CRID_JD_9022</span></p>
+             <div className="flex gap-3">
+                <span className="bg-green-500/20 text-green-400 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest">Verified PWA</span>
+                <span className="bg-amber-500/20 text-amber-500 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest">Gold Tier</span>
+             </div>
+          </div>
+       </div>
+
+       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <div className="space-y-4">
+             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-500 px-4">Account Settings</h3>
+             {[
+                { icon: <CreditCard className="w-5 h-5" />, label: 'Payment Methods', val: 'UPI Linked' },
+                { icon: <Store className="w-5 h-5" />, label: 'Home Jeweller', val: 'Malabar Gold' },
+                { icon: <Lock className="w-5 h-5" />, label: 'Security & 2FA', val: 'Biometric Enabled' },
+             ].map((item, idx) => (
+                <div key={idx} className="bg-white/5 border border-white/5 p-6 rounded-3xl flex justify-between items-center hover:bg-white/10 transition-all cursor-pointer group">
+                   <div className="flex items-center gap-4">
+                      <div className="text-slate-500 group-hover:text-amber-500 transition-colors">{item.icon}</div>
+                      <span className="font-bold text-sm">{item.label}</span>
+                   </div>
+                   <span className="text-xs text-slate-500 font-black uppercase">{item.val}</span>
+                </div>
+             ))}
+          </div>
+
+          <div className="space-y-4">
+             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-500 px-4">Policy</h3>
+             <div className="bg-white/5 border border-white/5 p-6 rounded-3xl">
+                <p className="text-xs text-slate-400 leading-relaxed mb-6 font-medium">Your account follows the <span className="text-amber-500 font-black">Standard 3% Spread Policy</span> for sellbacks and <span className="text-blue-400 font-black">0% Interest 75% LTV</span> for gold loans.</p>
+                <button className="w-full bg-white/5 border border-white/10 hover:border-amber-500/50 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">Download Terms</button>
+             </div>
+             <button className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 p-6 rounded-3xl flex items-center justify-between font-black uppercase tracking-widest text-xs transition-all">Sign Out <LogOut className="w-4 h-4" /></button>
+          </div>
+       </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-amber-500/30 overflow-x-hidden">
+      
+      {/* --- DESKTOP SIDEBAR --- */}
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-72 bg-black flex-col p-6 z-50 border-r border-white/5">
+        <div className="flex items-center gap-3 px-2 mb-12">
+          <CridoraLogo className="w-10 h-10" />
+          <h1 className="text-2xl font-black tracking-tighter italic uppercase">Cridora</h1>
+        </div>
+
+        <div className="space-y-2 flex-1">
+          {[
+            { id: 'portfolio', icon: <LayoutGrid />, label: 'Hub' },
+            { id: 'redeem', icon: <Zap />, label: 'Redemption' },
+            { id: 'history', icon: <History />, label: 'Ledger' },
+            { id: 'profile', icon: <User />, label: 'Me' },
+          ].map(tab => (
+            <button 
+              key={tab.id}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setView(tab.id === 'redeem' ? 'redeem' : 'main');
+              }}
+              className={`w-full flex items-center gap-4 px-5 py-4 rounded-[20px] transition-all font-black text-sm uppercase tracking-wider ${
+                activeTab === tab.id ? 'bg-amber-500 text-slate-950 scale-[1.02]' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </aside>
+
+      {/* --- MAIN AREA --- */}
+      <div className="lg:pl-72 min-h-screen pb-32 lg:pb-12">
+        <header className="sticky top-0 z-[40] bg-black/80 backdrop-blur-2xl border-b border-white/5 px-8 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-3 lg:hidden">
+            <CridoraLogo className="w-8 h-8" />
+            <h1 className="text-xl font-black tracking-tighter italic uppercase">Cridora</h1>
+          </div>
+          
+          <div className="hidden lg:flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-slate-500">
+             <span className="flex items-center gap-2"><Smartphone className="w-4 h-4 text-amber-500" /> PWA Secured</span>
+             <div className="flex items-center gap-4 bg-white/5 px-4 py-2 rounded-full border border-white/5">
+                <span className="text-green-500 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> ₹{liveRate.toLocaleString()}</span>
+                <span className="opacity-20">|</span>
+                <span>Gold 24K Live</span>
+             </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center text-slate-400 relative hover:bg-white/10 transition-all cursor-pointer">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-3 right-3 w-2 h-2 bg-amber-500 rounded-full border border-black animate-pulse"></span>
+            </div>
+            <div className="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center text-slate-950 font-black cursor-pointer" onClick={() => setActiveTab('profile')}>JD</div>
+          </div>
+        </header>
+
+        <main className="px-6 lg:px-12 py-12 max-w-7xl mx-auto">
+          {renderContent()}
+        </main>
+      </div>
+
+      {/* --- PWA MOBILE BOTTOM NAVBAR (FIXED ONLY ON MOBILE) --- */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] px-4 pb-8 pt-4 pointer-events-none">
+        <div className="max-w-md mx-auto bg-black/90 backdrop-blur-3xl border border-white/10 rounded-[32px] p-1 flex items-center justify-around shadow-[0_-20px_50px_rgba(0,0,0,0.8)] pointer-events-auto">
+          {[
+            { id: 'portfolio', icon: <LayoutGrid />, label: 'Hub' },
+            { id: 'redeem', icon: <Zap />, label: 'Redeem' },
+            { id: 'history', icon: <History />, label: 'Ledger' },
+            { id: 'profile', icon: <User />, label: 'Me' },
+          ].map(tab => (
+            <button 
+              key={tab.id}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setView(tab.id === 'redeem' ? 'redeem' : 'main');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl transition-all ${
+                activeTab === tab.id ? 'text-amber-500 bg-amber-500/10' : 'text-slate-500'
+              }`}
+            >
+              {React.cloneElement(tab.icon, { size: 18 })}
+              <span className="text-[8px] font-black uppercase tracking-widest">{tab.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default App;

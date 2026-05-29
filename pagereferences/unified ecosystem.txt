@@ -1,0 +1,346 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  LayoutDashboard, Users, Store, BarChart3, ShieldAlert, Zap, 
+  ArrowUpRight, ArrowDownLeft, Settings, Search, Bell, Globe, 
+  Wallet, Scale, MoreVertical, Activity, History, Lock, Eye, 
+  HandCoins, TrendingUp, Percent, RefreshCw, Database, Briefcase, 
+  Flame, PieChart, Navigation, FileSpreadsheet, Gift, Users2, 
+  Gem, HardDrive, Network, Layers, ShieldCheck, Map
+} from 'lucide-react';
+
+// --- SHARED DATA MOCKS (V4.0) ---
+const GOLD_PRICE_916 = 6845.50; // Per gram
+const RECENT_LEDGER = [
+  { id: '#TX-102', from: 'Family Vault Alpha', to: 'Sarah J.', weight: '2.500g', type: 'P2P Transfer', status: 'Settled' },
+  { id: '#TX-101', user: 'Rahul V.', from: 'Malabar Gold', to: 'Tanishq', weight: '10.000g', type: 'Cross-Redemption', status: 'Settling' },
+  { id: '#TX-100', user: 'Priya K.', type: 'GoldNest Deposit', weight: '0.500g', amount: '₹3,422', status: 'Minted' },
+];
+
+const JEWELLER_CONFIGS = [
+  { id: 'J-001', name: 'Malabar Gold', markup: 2.5, spread: 3.0, makingWaiver: '20%', scheme: '11+1 Bonus' },
+  { id: 'J-002', name: 'Tanishq', markup: 3.0, spread: 3.5, makingWaiver: 'Free Gold Coin', scheme: 'Akshaya Plan' },
+];
+
+const App = () => {
+  const [view, setView] = useState('admin'); // 'admin' | 'user' | 'jeweller'
+  const [activeTab, setActiveTab] = useState('overview');
+  
+  // --- SUB-COMPONENTS ---
+
+  const NavigationItem = ({ id, icon: Icon, label }) => (
+    <button 
+      onClick={() => setActiveTab(id)}
+      className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-black text-xs uppercase tracking-widest ${
+        activeTab === id ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+      }`}
+    >
+      <Icon className="w-5 h-5" />
+      {label}
+    </button>
+  );
+
+  // --- 1. ADMIN COMMAND CENTER (INFRASTRUCTURE LAYER) ---
+  const AdminView = () => (
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="col-span-2 bg-amber-500 p-8 rounded-[32px] text-slate-950">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-4 opacity-70">Network TVL (Gold-Backed)</p>
+          <p className="text-5xl font-black italic tracking-tighter">1,422.85 <span className="text-xl">kg</span></p>
+          <div className="mt-8 flex gap-4">
+            <div className="bg-black/10 px-4 py-2 rounded-xl text-[10px] font-bold">916 Gold: 1,200kg</div>
+            <div className="bg-black/10 px-4 py-2 rounded-xl text-[10px] font-bold">Silver Support: Ready</div>
+          </div>
+        </div>
+        <div className="bg-[#121212] border border-white/5 p-8 rounded-[32px]">
+           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2">Inter-Network Load</p>
+           <p className="text-3xl font-black italic">₹42.5L</p>
+           <p className="text-[10px] text-emerald-500 font-bold mt-2">Settlement Parity: 100%</p>
+        </div>
+        <div className="bg-[#121212] border border-white/5 p-8 rounded-[32px]">
+           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2">Active Nodes</p>
+           <p className="text-3xl font-black italic">148 <span className="text-sm font-bold text-slate-500">Jewellers</span></p>
+           <p className="text-[10px] text-blue-500 font-bold mt-2">DPR Reconciliation: Active</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-[#121212] border border-white/5 rounded-[32px] p-8">
+            <h3 className="text-xl font-black italic uppercase tracking-tighter mb-8 flex items-center gap-3">
+              <Network className="w-6 h-6 text-amber-500" /> Settlement Engine
+            </h3>
+            <div className="space-y-4">
+              {RECENT_LEDGER.map(tx => (
+                <div key={tx.id} className="flex items-center justify-between p-4 bg-black/40 border border-white/5 rounded-2xl hover:bg-white/5 transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 bg-amber-500/10 text-amber-500 rounded-lg"><History className="w-4 h-4" /></div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest">{tx.type}</p>
+                      <p className="text-xs text-slate-400 font-bold">{tx.from} → {tx.to}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-black text-amber-500">{tx.weight}</p>
+                    <p className="text-[9px] uppercase font-black text-emerald-500 tracking-widest">{tx.status}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+           <div className="bg-gradient-to-br from-purple-500/20 to-[#121212] border border-purple-500/20 rounded-[32px] p-8">
+              <h4 className="text-sm font-black uppercase tracking-tighter mb-4 flex items-center gap-2">
+                <Layers className="w-5 h-5 text-purple-400" /> Rule Engine Status
+              </h4>
+              <p className="text-[10px] text-slate-400 leading-relaxed mb-6 italic">Dynamic pricing and scheme logic are functioning at the modular layer. Multi-metal expansion is 70% integrated.</p>
+              <div className="space-y-2">
+                <div className="flex justify-between text-[8px] font-black uppercase tracking-widest"><span>GoldNest Core</span><span className="text-emerald-400">Stable</span></div>
+                <div className="h-1 bg-white/5 rounded-full overflow-hidden"><div className="h-full bg-purple-500 w-[95%]" /></div>
+              </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // --- 2. USER DASHBOARD (SAVINGS & UTILITY LAYER) ---
+  const UserView = () => (
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-[#121212] border border-white/5 p-8 rounded-[32px]">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4">Your Gold Portfolio</p>
+          <div className="flex items-baseline gap-2">
+            <span className="text-5xl font-black italic">42.500</span>
+            <span className="text-xl font-black text-amber-500 italic">grams</span>
+          </div>
+          <p className="text-xs font-bold text-slate-400 mt-2">Current Value: ₹2,90,933</p>
+        </div>
+        <div className="bg-[#121212] border border-white/5 p-8 rounded-[32px]">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4">Liquidity Access</p>
+          <p className="text-3xl font-black italic">₹1.8L</p>
+          <p className="text-[10px] font-black text-emerald-500 mt-2">Available for Instant Payout</p>
+        </div>
+        <div className="bg-amber-500 p-8 rounded-[32px] text-slate-950">
+           <div className="flex justify-between items-start mb-6">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70">GoldNest Scheme</p>
+              <span className="bg-black/10 px-2 py-1 rounded text-[8px] font-black">Month 8/11</span>
+           </div>
+           <p className="text-xl font-black italic uppercase leading-none">10% Maturity Bonus <br/>Unlocked</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'Gifting', icon: Gift, color: 'text-rose-500' },
+          { label: 'Family Vault', icon: Users2, color: 'text-blue-500' },
+          { label: 'P2P Transfer', icon: Network, color: 'text-purple-500' },
+          { label: 'Redeem Physical', icon: Gem, color: 'text-amber-500' },
+        ].map(item => (
+          <button key={item.label} className="bg-[#121212] border border-white/5 p-6 rounded-[24px] hover:bg-white/5 transition-all text-left">
+            <item.icon className={`w-6 h-6 ${item.color} mb-4`} />
+            <p className="text-[10px] font-black uppercase tracking-widest">{item.label}</p>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  // --- 3. JEWELLER DASHBOARD (CUSTODY & OPS LAYER) ---
+  const JewellerView = () => (
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-slate-900 border border-white/5 p-8 rounded-[32px]">
+           <div className="flex justify-between items-center mb-6">
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Vault Custody</h4>
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+           </div>
+           <p className="text-4xl font-black italic">125.40 <span className="text-lg">kg</span></p>
+           <p className="text-[10px] font-bold text-slate-500 mt-2">Physical Inventory Linked to Cridora</p>
+        </div>
+        <div className="bg-[#121212] border border-white/5 p-8 rounded-[32px]">
+           <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">DPR Today</h4>
+           <div className="flex justify-between items-end">
+              <div>
+                 <p className="text-2xl font-black italic">₹8.4L</p>
+                 <p className="text-[9px] font-black text-emerald-500">Minted Volume</p>
+              </div>
+              <div className="text-right">
+                 <p className="text-2xl font-black italic text-rose-500">₹1.2L</p>
+                 <p className="text-[9px] font-black text-rose-500/50">Burn/Redeemed</p>
+              </div>
+           </div>
+        </div>
+        <div className="bg-[#121212] border border-white/5 p-8 rounded-[32px]">
+           <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Markup Config</h4>
+           <div className="flex items-center gap-4">
+              <span className="text-3xl font-black italic text-amber-500">+2.5%</span>
+              <button className="bg-white/5 p-3 rounded-xl border border-white/10"><Settings className="w-4 h-4 text-slate-500" /></button>
+           </div>
+        </div>
+      </div>
+
+      <div className="bg-[#121212] border border-white/5 rounded-[32px] p-8">
+        <h3 className="text-xl font-black italic uppercase tracking-tighter mb-8 flex items-center gap-3">
+          <Layers className="w-6 h-6 text-amber-500" /> GoldNest Scheme Builder
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-6">
+             <div className="p-6 bg-black/40 rounded-3xl border border-white/5">
+                <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-4">Scheme Type</p>
+                <div className="flex gap-2">
+                   <button className="flex-1 py-3 bg-amber-500 text-slate-950 font-black text-[9px] uppercase rounded-xl">11+1 Installment</button>
+                   <button className="flex-1 py-3 bg-white/5 text-slate-500 font-black text-[9px] uppercase rounded-xl border border-white/10">Custom Rule</button>
+                </div>
+             </div>
+             <div className="p-6 bg-black/40 rounded-3xl border border-white/5">
+                <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-4">Maturity Benefit</p>
+                <div className="flex items-center gap-4">
+                   <input type="range" className="flex-1 accent-amber-500" />
+                   <span className="text-sm font-black">15% Waiver</span>
+                </div>
+             </div>
+          </div>
+          <div className="p-8 bg-amber-500/5 border border-amber-500/20 rounded-3xl">
+             <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-4">Strategy Preview</p>
+             <p className="text-xs font-bold leading-relaxed text-slate-400">
+               "Your customers will contribute monthly at the live 916 gold rate. At month 12, Cridora logic will automatically apply a 100% making charge waiver on up to 50g of jewellery."
+             </p>
+             <button className="w-full mt-8 py-4 bg-amber-500 text-slate-950 font-black text-xs uppercase tracking-widest rounded-2xl">Push to App Marketplace</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-black text-white font-sans flex selection:bg-amber-500/30">
+      
+      {/* Dynamic Navigation */}
+      <nav className="w-72 bg-[#050505] border-r border-white/5 flex flex-col p-8 sticky top-0 h-screen">
+        <div className="flex items-center gap-3 mb-12">
+          <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center text-slate-950">
+             <Scale className="w-6 h-6" />
+          </div>
+          <h1 className="text-2xl font-black tracking-tighter italic uppercase">Cridora</h1>
+        </div>
+
+        {/* View Switcher */}
+        <div className="bg-white/5 p-1 rounded-2xl mb-8 flex">
+           {['admin', 'user', 'jeweller'].map(v => (
+             <button 
+               key={v}
+               onClick={() => { setView(v); setActiveTab('overview'); }}
+               className={`flex-1 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all ${view === v ? 'bg-white/10 text-white shadow-xl' : 'text-slate-600'}`}
+             >
+               {v}
+             </button>
+           ))}
+        </div>
+
+        <div className="flex-1 space-y-2">
+          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600 mb-4 px-4">Navigation</p>
+          
+          <NavigationItem id="overview" icon={LayoutDashboard} label="Overview" />
+          
+          {view === 'admin' && (
+            <>
+              <NavigationItem id="dpr" icon={FileSpreadsheet} label="DPR Risk" />
+              <NavigationItem id="settlement" icon={Network} label="Settlement" />
+              <NavigationItem id="vendors" icon={Store} label="Jeweller Grid" />
+            </>
+          )}
+
+          {view === 'user' && (
+            <>
+              <NavigationItem id="portfolio" icon={Gem} label="Portfolio" />
+              <NavigationItem id="goldnest" icon={Layers} label="GoldNest" />
+              <NavigationItem id="marketplace" icon={Store} label="Marketplace" />
+            </>
+          )}
+
+          {view === 'jeweller' && (
+            <>
+              <NavigationItem id="vault" icon={HardDrive} label="Vault Ops" />
+              <NavigationItem id="schemes" icon={Layers} label="Scheme Builder" />
+              <NavigationItem id="crm" icon={Users} label="Customers" />
+            </>
+          )}
+        </div>
+
+        <div className="bg-gradient-to-t from-amber-500/10 to-transparent p-6 rounded-3xl border border-white/5">
+           <p className="text-[9px] font-black uppercase text-amber-500 mb-1">Live 916 Rate</p>
+           <p className="text-xl font-black italic tracking-tighter">₹{GOLD_PRICE_916}<span className="text-[10px] text-slate-500 ml-1">/g</span></p>
+        </div>
+      </nav>
+
+      {/* Main Container */}
+      <main className="flex-1 min-h-screen">
+        <header className="sticky top-0 z-50 bg-black/50 backdrop-blur-3xl border-b border-white/5 px-12 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-8">
+             <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
+                <input 
+                  type="text" 
+                  placeholder={`Search ${view} ecosystem...`} 
+                  className="bg-white/5 border border-white/5 rounded-full pl-12 pr-6 py-3 w-80 text-xs font-bold outline-none focus:border-amber-500/50" 
+                />
+             </div>
+             <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">BIS Node: Operational</span>
+             </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+             <div className="text-right">
+                <p className="text-[9px] font-black uppercase text-slate-500">Current Node</p>
+                <p className="text-xs font-black uppercase italic tracking-widest">Kochi_Hub_01</p>
+             </div>
+             <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center relative hover:bg-white/10 cursor-pointer transition-all">
+                <Bell className="w-5 h-5 text-slate-400" />
+                <span className="absolute top-3 right-3 w-1.5 h-1.5 bg-amber-500 rounded-full" />
+             </div>
+          </div>
+        </header>
+
+        <div className="p-12 max-w-7xl mx-auto">
+          <div className="mb-12">
+             <div className="flex justify-between items-end mb-4">
+                <div>
+                   <h2 className="text-6xl font-black italic uppercase tracking-tighter">
+                     {activeTab === 'overview' ? `${view} Portal` : activeTab}
+                   </h2>
+                   <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-[10px] mt-2">
+                     Cridora V4.0 Strategic Infrastructure Layer
+                   </p>
+                </div>
+                {view === 'admin' && (
+                  <button className="bg-rose-500 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all">Freeze Network</button>
+                )}
+             </div>
+          </div>
+
+          {/* Dynamic Content Routing */}
+          {activeTab === 'overview' && (
+             <>
+               {view === 'admin' && <AdminView />}
+               {view === 'user' && <UserView />}
+               {view === 'jeweller' && <JewellerView />}
+             </>
+          )}
+
+          {activeTab !== 'overview' && (
+             <div className="flex flex-col items-center justify-center py-40 border border-dashed border-white/10 rounded-[40px]">
+                <Activity className="w-12 h-12 text-slate-800 mb-4 animate-pulse" />
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-700">Sub-Module Layer Active</p>
+             </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default App;
